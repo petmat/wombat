@@ -6,10 +6,14 @@ import { createServer, listen, Request, Response } from "./server";
 const host = "localhost";
 const port = 8090;
 
-const start = flow(createServer, listen({ port, host }));
+const routes = [
+  { url: "hello", handler: (req: Request) => TE.of({ body: "HELLO" }) },
+];
 
-const logServerStarted = () => {
-  console.log(`Server is running on http://${host}:${port}`);
-};
+const start = () => pipe(routes, createServer, listen({ port, host }));
 
-start()().then(E.fold(console.error, logServerStarted));
+start()().then(
+  E.fold(console.error, () =>
+    console.log(`Server is running on http://${host}:${port}`)
+  )
+);
